@@ -150,3 +150,105 @@
    "Return the list untouched when old element not present"))
 
 
+
+;; subst2 :: Atom -> Atom -> Atom -> List Atom -> List Atom
+(define subst2
+  (lambda (new o1 o2 lat)
+    (cond
+      ((null? lat) '())
+      ((or (equal? (car lat) o1)
+           (equal? (car lat) o2)) (cons new (cdr lat)))
+      (else (cons (car lat) (subst2 new o1 o2 (cdr lat)))))))
+
+(module+ test
+  (check-equal?
+    (subst2 'vanilla
+            'chocolate 'banana
+            '(banana ice cream with chocolate topping))
+    '(vanilla ice cream with chocolate topping)
+    "Should replace one of the old elements")
+
+  (check-equal?
+    (subst2 'vanilla
+            'chocolate 'banana
+            '(lemon ice cream with chocolate topping))
+    '(lemon ice cream with vanilla topping)
+    "Should replace one of the old elements even if the other is not present"))
+
+
+
+;; multirember :: Atom -> List Atom -> List Atom
+(define multirember
+  (lambda (a lat)
+    (cond
+      ((null? lat) '())
+      ((equal? a (car lat)) (multirember a (cdr lat)))
+      (else (cons (car lat) (multirember a (cdr lat)))))))
+
+(module+ test
+  (check-equal?
+    (multirember 'cup '(coffee cup tea cup and hick cup))
+    '(coffee tea and hick)
+    "Should remove all occurences of an atom from the list of atoms"))
+
+
+
+;; multiinsertR :: Atom -> Atom -> List Atom -> List Atom
+(define multiinsertR
+  (lambda (new old lat)
+    (cond
+      ((null? lat) '())
+      ((equal? (car lat) old)
+       (cons (car lat)
+             (cons new (multiinsertR new old (cdr lat)))))
+      (else
+        (cons (car lat) (multiinsertR new old (cdr lat)))))))
+
+(module+ test
+  (check-equal?
+   (multiinsertR 'lemon 'ice
+                 '(ice cream with ice for dessert))
+   '(ice lemon cream with ice lemon for dessert)
+   "Insert an element to the right of already present elements"))
+
+
+
+;; multiinsertL :: Atom -> Atom -> List Atom -> List Atom
+(define multiinsertL
+  (lambda (new old lat)
+    (cond
+      ((null? lat) '())
+      ((equal? (car lat) old)
+       (cons new
+             (cons (car lat) (multiinsertL new old (cdr lat)))))
+      (else
+        (cons (car lat) (multiinsertL new old (cdr lat)))))))
+
+(module+ test
+  (check-equal?
+   (multiinsertL 'lemon 'ice
+                 '(ice cream with ice for dessert))
+   '(lemon ice cream with lemon ice for dessert)
+   "Insert an element to the right of already present elements"))
+
+
+
+;; multisubst :: Atom -> Atom -> List Atom -> List Atom
+(define multisubst
+  (lambda (new old lat)
+    (cond
+      ((null? lat) '())
+      ((equal? (car lat) old)
+       (cons new (multisubst new old (cdr lat))))
+      (else
+        (cons (car lat) (multisubst new old (cdr lat)))))))
+
+(module+ test
+  (check-equal?
+   (multisubst 'lemon 'ice
+               '(ice cream with ice for dessert))
+   '(lemon cream with lemon for dessert)
+   "Insert an element to the right of already present elements"))
+
+
+;; 56
