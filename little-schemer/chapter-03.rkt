@@ -250,5 +250,3 @@
    '(lemon cream with lemon for dessert)
    "Insert an element to the right of already present elements"))
 
-
-;; 59
