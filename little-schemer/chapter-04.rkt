@@ -269,12 +269,19 @@
 
 
 
+;; one? :: Number -> Bool
+(define one?
+  (λ (n)
+     (= n 1)))
+
+
+
 ;; rempick :: Number -> List Atom -> Atom
 (define rempick
   (lambda (n lat)
     (cond
       ((null? lat) '())
-      ((zero? (sub1 n)) (cdr lat))
+      ((one? n) (cdr lat))
       (else (cons (car lat)
                   (rempick (sub1 n) (cdr lat)))))))
 
@@ -282,7 +289,12 @@
   (check-equal?
     (rempick 3 '(hotdogs with hot mustard))
     '(hotdogs with mustard)
-    "Hot is third word so the mustard won't be hot"))
+    "Hot is third word so the mustard won't be hot")
+
+  (check-equal?
+    (rempick 5 '(hotdogs with hot mustard))
+    '(hotdogs with hot mustard)
+    "List is untouched is you try to rempick beyond the list"))
 
 
 ;; no-nums :: List Atom -> List Atom
@@ -312,3 +324,47 @@
   (check-equal?
     (all-nums '(5 pears 6 prunes 9 dates))
     '(5 6 9)))
+
+
+
+;; eqan? :: Atom -> Atom -> Bool
+(define eqan?
+  (λ (n m)
+    (cond
+      ((and (number? n) (number? m)) (= n m))
+      ((or (number? n) (number? m)) #f)
+      (else (eq? n m)))))
+
+(module+ test
+  (check-true
+    (eqan? 1 1)
+    "Should be equal")
+
+  (check-true
+    (eqan? 'pineapple 'pineapple)
+    "Should be equal")
+
+  (check-false
+    (eqan? 'pineapple 'apple)
+    "Should not be equal"))
+
+
+
+;; occur :: Atom -> List Atom -> Number
+(define occur
+  (λ (a lat)
+    (cond
+      ((null? lat) 0)
+      ((eqan? a (car lat))
+       (add1 (occur a (cdr lat))))
+      (else (occur a (cdr lat))))))
+
+(module+ test
+  (check-equal?
+    (occur 'ice '(ice cream with ice for dessert)) 2
+    "Ice occurs twice on this list")
+
+  (check-equal?
+    (occur 'lemon '(ice cream with ice for dessert)) 0
+    "Lemon doesn't occur on this list at all"))
+
