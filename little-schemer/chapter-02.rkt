@@ -13,20 +13,20 @@
 
 (module+ test
   (check-true
-    (lat? '())
-    "Empty list is a list of atoms")
+    (lat? '(Jack Sprat could eat no chicken fat))
+    "List of strings is a list of atoms")
+
+  (check-false
+    (lat? '((Jack) Sprat could eat no chicken fat))
+    "One of S-expressions in l is not an atom")
+
+  (check-false
+    (lat? '(Jack (Sprat could) eat no chicken fat))
+    "One of S-expressions in l is not an atom")
 
   (check-true
-    (lat? '(1 2 "ladida"))
-    "List of numbers and strings is a list of atoms")
-
-  (check-false
-    (lat? '('()))
-    "A list of empty list is not a list of atoms")
-
-  (check-false
-    (lat? '(1 2 ('ladida) "ladida"))
-    "A list containing a list is not a list of atoms"))
+    (lat? '())
+    "Empty list is a list of atoms"))
 
 
 
@@ -40,19 +40,11 @@
 
 (module+ test
   (check-true
-    (member? 2 '(1 2 3))
-    "2 is a member of list '(1 2 3)")
-
-  (check-true
-    (member? 2 '(1 2 3 2))
-    "2 is a member of list '(1 2 3 2)")
+    (member? 'tea '(coffee tea or milk))
+    "Tea is present in the list")
 
   (check-false
-    (member? 2 '(1 3))
-    "2 is not a member of list '(1 3)")
-
-  (check-false
-    (member? 2 '(1 '(2) 3))
-    "2 is not a member of list '(1 '(2) 3)"))
+    (member? 'poached '(fried eggs and scrambledd eggs))
+    "poached is not present in the list"))
 
 

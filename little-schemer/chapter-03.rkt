@@ -8,21 +8,29 @@
   (lambda (a lat)
     (cond
       ((null? lat) '())
-      ((equal? a (car lat)) (rember a (cdr lat)))
+      ((equal? a (car lat)) (cdr lat))
       (else (cons (car lat) (rember a (cdr lat)))))))
 
 (module+ test
   (check-equal?
-    (rember 2 '(1 2 3)) '(1 3)
-    "'(1 2 3) without 2 is '(1 3)")
+    (rember 'mint '(lamb chops and mint jelly))
+    '(lamb chops and jelly)
+    "An element removed from list")
 
   (check-equal?
-    (rember 2 '()) '()
-    "Removing 2 out of an empty list is a empty list")
+    (rember 'mint '(lamb chops and mint flavored mint jelly))
+    '(lamb chops and flavored mint jelly)
+    "Only first found element removed from list")
 
   (check-equal?
-    (rember 2 '(5 6 7)) '(5 6 7)
-    "If element not on a list the list stays unchanged"))
+    (rember 'toast '(bacon lettuce and tomato))
+   '(bacon lettuce and tomato)
+    "List returned untouched when element not found")
+
+  (check-equal?
+    (rember 'cup '(coffee cup tea cup and hick cup))
+    '(coffee tea cup and hick cup)
+    "Only first found element removed from list"))
 
 
 

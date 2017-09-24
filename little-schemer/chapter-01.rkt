@@ -10,15 +10,23 @@
 
 (module+ test (require rackunit)
   (check-true
-    (atom? 1)
-    "A number is an atom")
+    (atom? 'atom)
+    "String is an atom")
 
   (check-true
-    (atom? 'ladida)
-    "Symbol is an atom")
+    (atom? 'turkey)
+    "String is an atom")
 
   (check-true
-    (atom? "ladida")
+    (atom? 'u)
+    "Single character is an atom")
+
+  (check-true
+    (atom? 1492)
+    "Number is an atom")
+
+  (check-true
+    (atom? '*abc$)
     "String is an atom")
 
   (check-false
