@@ -298,4 +298,17 @@
     (no-nums '(5 pears 6 prunes 9 dates))
     '(pears prunes dates)))
 
-;; 78
+
+
+;; all-nums :: List Atom -> Tuple
+(define all-nums
+  (lambda (lat)
+    (cond
+      ((null? lat) '())
+      ((number? (car lat)) (cons (car lat) (all-nums (cdr lat))))
+      (else (all-nums (cdr lat))))))
+
+(module+ test
+  (check-equal?
+    (all-nums '(5 pears 6 prunes 9 dates))
+    '(5 6 9)))
