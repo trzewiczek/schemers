@@ -5,17 +5,17 @@ Code exercises from the *Little Schemer* series of books.
 
 ## Books series:
 
- * [Little Schemer](https://mitpress.mit.edu/books/little-schemer)
-   by Daniel P. Friedmann and Matthias Felleisen
+▶ [Little Schemer](https://mitpress.mit.edu/books/little-schemer)
+  by Daniel P. Friedmann and Matthias Felleisen
 
- * [Seasoned Schemer](https://mitpress.mit.edu/books/seasoned-schemer)
-   by Daniel P. Friedman and Matthias Felleisen
+■ [Seasoned Schemer](https://mitpress.mit.edu/books/seasoned-schemer)
+  by Daniel P. Friedman and Matthias Felleisen
 
- * [Reasoned Schemer](https://mitpress.mit.edu/books/reasoned-schemer)
-   by Daniel P. Friedman, William E. Byrd and Oleg Kiselyov
+■ [Reasoned Schemer](https://mitpress.mit.edu/books/reasoned-schemer)
+  by Daniel P. Friedman, William E. Byrd and Oleg Kiselyov
 
- * [Little Prover](https://mitpress.mit.edu/books/little-prover)
-   by Daniel P. Friedman and Carl Eastlund
+■ [Little Prover](https://mitpress.mit.edu/books/little-prover)
+  by Daniel P. Friedman and Carl Eastlund
 
 
 ## Implementation
