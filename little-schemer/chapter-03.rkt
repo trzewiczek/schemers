@@ -8,7 +8,7 @@
   (lambda (a lat)
     (cond
       ((null? lat) '())
-      ((equal? a (car lat)) (cdr lat))
+      ((eq? a (car lat)) (cdr lat))
       (else (cons (car lat) (rember a (cdr lat)))))))
 
 (module+ test
@@ -76,7 +76,7 @@
   (lambda (new old lat)
     (cond
       ((null? lat) '())
-      ((equal? old (car lat)) (cons (car lat) (cons new (cdr lat))))
+      ((eq? old (car lat)) (cons (car lat) (cons new (cdr lat))))
       (else (cons (car lat) (insertR new old (cdr lat)))))))
 
 (module+ test
@@ -108,7 +108,7 @@
   (lambda (new old lat)
     (cond
       ((null? lat) '())
-      ((equal? old (car lat)) (cons new (cons (car lat) (cdr lat))))
+      ((eq? old (car lat)) (cons new (cons (car lat) (cdr lat))))
       (else (cons (car lat) (insertL new old (cdr lat)))))))
 
 (module+ test
@@ -141,7 +141,7 @@
   (lambda (new old lat)
     (cond
       ((null? lat) '())
-      ((equal? old (car lat)) (cons new (cdr lat)))
+      ((eq? old (car lat)) (cons new (cdr lat)))
       (else (cons (car lat) (subst new old (cdr lat)))))))
 
 (module+ test
@@ -164,8 +164,8 @@
   (lambda (new o1 o2 lat)
     (cond
       ((null? lat) '())
-      ((or (equal? (car lat) o1)
-           (equal? (car lat) o2)) (cons new (cdr lat)))
+      ((or (eq? (car lat) o1)
+           (eq? (car lat) o2)) (cons new (cdr lat)))
       (else (cons (car lat) (subst2 new o1 o2 (cdr lat)))))))
 
 (module+ test
@@ -190,7 +190,7 @@
   (lambda (a lat)
     (cond
       ((null? lat) '())
-      ((equal? a (car lat)) (multirember a (cdr lat)))
+      ((eq? a (car lat)) (multirember a (cdr lat)))
       (else (cons (car lat) (multirember a (cdr lat)))))))
 
 (module+ test
@@ -206,7 +206,7 @@
   (lambda (new old lat)
     (cond
       ((null? lat) '())
-      ((equal? (car lat) old)
+      ((eq? (car lat) old)
        (cons (car lat)
              (cons new (multiinsertR new old (cdr lat)))))
       (else
@@ -226,7 +226,7 @@
   (lambda (new old lat)
     (cond
       ((null? lat) '())
-      ((equal? (car lat) old)
+      ((eq? (car lat) old)
        (cons new
              (cons (car lat) (multiinsertL new old (cdr lat)))))
       (else
@@ -246,7 +246,7 @@
   (lambda (new old lat)
     (cond
       ((null? lat) '())
-      ((equal? (car lat) old)
+      ((eq? (car lat) old)
        (cons new (multisubst new old (cdr lat))))
       (else
         (cons (car lat) (multisubst new old (cdr lat)))))))

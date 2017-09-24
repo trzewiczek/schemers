@@ -35,7 +35,7 @@
   (lambda (a lat)
     (cond
       ((null? lat) #f)
-      (else (or (equal? a (car lat))
+      (else (or (eq? a (car lat))
                 (member? a (cdr lat)))))))
 
 (module+ test
