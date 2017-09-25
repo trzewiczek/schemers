@@ -4,7 +4,7 @@
 
 ;; add1 :: Number -> Number
 (define add1
-  (lambda (n)
+  (λ (n)
     (+ n 1)))
 
 (module+ test
@@ -16,7 +16,7 @@
 
 ;; sub1 :: Number -> Number
 (define sub1
-  (lambda (n)
+  (λ (n)
     (- n 1)))
 
 (module+ test
@@ -28,7 +28,7 @@
 
 ;; o+ :: Number -> Number -> Number
 (define o+
-  (lambda (n m)
+  (λ (n m)
     (cond
       ((zero? m) n)
       (else (add1 (o+ n (sub1 m)))))))
@@ -42,7 +42,7 @@
 
 ;; o- :: Number -> Number -> Number
 (define o-
-  (lambda (n m)
+  (λ (n m)
     (cond
       ((zero? m) n)
       (else (sub1 (o- n (sub1 m)))))))
@@ -60,7 +60,7 @@
 
 ;; addtup :: Tuple -> Number
 (define addtup
-  (lambda (tup)
+  (λ (tup)
     (cond
       ((null? tup) 0)
       (else (o+ (car tup)
@@ -79,7 +79,7 @@
 
 ;; o* :: Number -> Number -> Number
 (define o*
-  (lambda (n m)
+  (λ (n m)
     (cond
       ((zero? m) 0)
       (else (o+ n (o* n (sub1 m)))))))
@@ -97,7 +97,7 @@
 
 ;; tup+ :: Tuple -> Tuple -> Tuple
 (define tup+
-  (lambda (tup1 tup2)
+  (λ (tup1 tup2)
     (cond
       ((null? tup1) tup2)
       ((null? tup2) tup1)
@@ -130,7 +130,7 @@
 
 ;; o> :: Number -> Number -> Bool
 (define o>
-  (lambda (n m)
+  (λ (n m)
     (cond
       ((zero? n) #f)
       ((zero? m) #t)
@@ -154,7 +154,7 @@
 
 ;; o< :: Number -> Number -> Bool
 (define o<
-  (lambda (n m)
+  (λ (n m)
     (cond
       ((zero? m) #f)
       ((zero? n) #t)
@@ -178,7 +178,7 @@
 
 ;; o= :: Number -> Number -> Bool
 (define o=
-  (lambda (n m)
+  (λ (n m)
     (cond
       ((o> n m) #f)
       ((o< n m) #f)
@@ -201,7 +201,7 @@
 
 ;; o^ :: Number -> Number -> Number
 (define o^
-  (lambda (n m)
+  (λ (n m)
     (cond
       ((zero? m) 1)
       (else
@@ -224,7 +224,7 @@
 
 ;; o/ :: Number -> Number -> Number
 (define o/
-  (lambda (n m)
+  (λ (n m)
     (cond
       ((o< n m) 0)
       (else (add1 (o/ (o- n m) m))))))
@@ -238,7 +238,7 @@
 
 ;; length :: List Atom -> Number
 (define length
-  (lambda (lat)
+  (λ (lat)
     (cond
       ((null? lat) 0)
       (else (add1 (length (cdr lat)))))))
@@ -256,7 +256,7 @@
 
 ;; pick :: Number -> List Atom -> Atom
 (define pick
-  (lambda (n lat)
+  (λ (n lat)
     (cond
       ((zero? (sub1 n)) (car lat))
       (else (pick (sub1 n) (cdr lat))))))
@@ -278,7 +278,7 @@
 
 ;; rempick :: Number -> List Atom -> Atom
 (define rempick
-  (lambda (n lat)
+  (λ (n lat)
     (cond
       ((null? lat) '())
       ((one? n) (cdr lat))
@@ -299,7 +299,7 @@
 
 ;; no-nums :: List Atom -> List Atom
 (define no-nums
-  (lambda (lat)
+  (λ (lat)
     (cond
       ((null? lat) '())
       ((number? (car lat)) (no-nums (cdr lat)))
@@ -314,7 +314,7 @@
 
 ;; all-nums :: List Atom -> Tuple
 (define all-nums
-  (lambda (lat)
+  (λ (lat)
     (cond
       ((null? lat) '())
       ((number? (car lat)) (cons (car lat) (all-nums (cdr lat))))

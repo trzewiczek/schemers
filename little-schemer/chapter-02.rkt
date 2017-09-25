@@ -5,7 +5,7 @@
 
 ;; lat? :: List -> Bool
 (define lat?
-  (lambda (l)
+  (λ (l)
     (cond
       ((null? l) #t)
       ((atom? (car l)) (lat? (cdr l)))
@@ -32,7 +32,7 @@
 
 ;; member? :: Atom -> List Atom -> List Atom
 (define member?
-  (lambda (a lat)
+  (λ (a lat)
     (cond
       ((null? lat) #f)
       (else (or (eq? a (car lat))

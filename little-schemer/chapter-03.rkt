@@ -5,7 +5,7 @@
 
 ;; rember :: Atom -> List Atom -> List Atom
 (define rember
-  (lambda (a lat)
+  (λ (a lat)
     (cond
       ((null? lat) '())
       ((eq? a (car lat)) (cdr lat))
@@ -36,7 +36,7 @@
 
 ;; firsts :: List -> List
 (define firsts
-  (lambda (l)
+  (λ (l)
     (cond
       ((null? l) '())
       ((atom? (car l)) (cons (car l) (firsts (cdr l))))
@@ -73,7 +73,7 @@
 
 ;; insertR :: Atom -> Atom -> List Atom -> List Atom
 (define insertR
-  (lambda (new old lat)
+  (λ (new old lat)
     (cond
       ((null? lat) '())
       ((eq? old (car lat)) (cons (car lat) (cons new (cdr lat))))
@@ -105,7 +105,7 @@
 
 ;; insertL :: Atom -> Atom -> List Atom -> List Atom
 (define insertL
-  (lambda (new old lat)
+  (λ (new old lat)
     (cond
       ((null? lat) '())
       ((eq? old (car lat)) (cons new (cons (car lat) (cdr lat))))
@@ -138,7 +138,7 @@
 
 ;; subst :: Atom -> Atom -> List Atom -> List Atom
 (define subst
-  (lambda (new old lat)
+  (λ (new old lat)
     (cond
       ((null? lat) '())
       ((eq? old (car lat)) (cons new (cdr lat)))
@@ -161,7 +161,7 @@
 
 ;; subst2 :: Atom -> Atom -> Atom -> List Atom -> List Atom
 (define subst2
-  (lambda (new o1 o2 lat)
+  (λ (new o1 o2 lat)
     (cond
       ((null? lat) '())
       ((or (eq? (car lat) o1)
@@ -187,7 +187,7 @@
 
 ;; multirember :: Atom -> List Atom -> List Atom
 (define multirember
-  (lambda (a lat)
+  (λ (a lat)
     (cond
       ((null? lat) '())
       ((eq? a (car lat)) (multirember a (cdr lat)))
@@ -203,7 +203,7 @@
 
 ;; multiinsertR :: Atom -> Atom -> List Atom -> List Atom
 (define multiinsertR
-  (lambda (new old lat)
+  (λ (new old lat)
     (cond
       ((null? lat) '())
       ((eq? (car lat) old)
@@ -223,7 +223,7 @@
 
 ;; multiinsertL :: Atom -> Atom -> List Atom -> List Atom
 (define multiinsertL
-  (lambda (new old lat)
+  (λ (new old lat)
     (cond
       ((null? lat) '())
       ((eq? (car lat) old)
@@ -243,7 +243,7 @@
 
 ;; multisubst :: Atom -> Atom -> List Atom -> List Atom
 (define multisubst
-  (lambda (new old lat)
+  (λ (new old lat)
     (cond
       ((null? lat) '())
       ((eq? (car lat) old)

@@ -5,7 +5,7 @@
 
 ;; atom? :: _ -> Bool
 (define atom?
-  (lambda (x)
+  (λ (x)
     (and (not (pair? x)) (not (null? x)))))
 
 (module+ test (require rackunit)
