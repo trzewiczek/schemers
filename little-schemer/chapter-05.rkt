@@ -184,3 +184,98 @@
     (leftmost '(((hot) (tuna (and))) cheese))
     'hot))
 
+
+
+;; eqlist :: List -> List -> Bool
+(define eqlist?
+  (λ (l1 l2)
+     (cond
+       ((and (null? l1) (null? l2)) #t)
+       ((or (null? l1) (null? l2)) #f)
+       (else (and (equal? (car l1) (car l2))
+                  (equal? (cdr l1) (cdr l2)))))))
+
+(module+ test
+  (check-true
+    (eqlist? '(strawberry ice cream)
+             '(strawberry ice cream)))
+
+  (check-false
+    (eqlist? '(strawberry ice cream)
+             '(strawberry cream ice)))
+
+  (check-false
+    (eqlist? '(banana ((split)))
+             '((banana) (split))))
+
+  (check-false
+    (eqlist? '(beef ((sausage)) (and (soda)))
+             '(beef ((salami)) (and (soda)))))
+
+  (check-true
+    (eqlist? '(beef ((sausage)) (and (soda)))
+             '(beef ((sausage)) (and (soda)))))
+
+  (check-true
+    (eqlist? '() '())))
+
+
+
+;; equal? :: Any -> Any -> Bool
+(define equal?
+  (λ (s1 s2)
+    (cond
+      ((and (atom? s1) (atom? s2))
+       (eqan? s1 s2))
+      ((or (atom? s1) (atom? s2))
+       #f)
+      (else
+        (eqlist? s1 s2)))))
+
+(module+ test
+  (check-true
+    (equal? 0 0))
+
+  (check-true
+    (equal? 'potato 'potato))
+
+  (check-true
+    (equal? '(potato (soup)) '(potato (soup))))
+
+  (check-false
+    (equal? 0 1))
+
+  (check-false
+    (equal? 'potato 'tomato))
+
+  (check-false
+    (equal? '(potato (soup)) '(tomato (soup)))))
+
+
+
+;; rember :: Atom -> List -> List
+(define rember
+  (λ (s l)
+     (cond
+       ((null? l) '())
+       ((equal? s (car l)) (cdr l))
+       (else (cons (car l)
+                   (rember s (cdr l)))))))
+
+(module+ test
+  (check-equal?
+    (rember 2 '(1 2 3))
+    '(1 3))
+
+  (check-equal?
+    (rember 'tomato '(a tomato soup))
+    '(a soup))
+
+  (check-equal?
+    (rember '(tomato) '(a (tomato) soup))
+    '(a soup))
+
+  (check-equal?
+    (rember '() '(a () soup))
+    '(a soup)))
+
