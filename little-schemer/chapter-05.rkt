@@ -278,4 +278,3 @@
   (check-equal?
     (rember '() '(a () soup))
     '(a soup)))
-

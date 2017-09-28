@@ -1,6 +1,6 @@
 #lang racket
 (module+ test (require rackunit))
-(provide add1 eqan?)
+(provide add1 eqan? o+ o* o^)
 
 
 ;; add1 :: Number -> Number
