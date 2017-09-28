@@ -1,6 +1,7 @@
 #lang racket
 (require "chapter-01.rkt")
 (module+ test (require rackunit))
+(provide multirember)
 
 
 ;; rember :: Atom -> List Atom -> List Atom
