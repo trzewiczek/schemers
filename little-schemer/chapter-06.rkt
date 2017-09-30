@@ -2,6 +2,7 @@
 (module+ test (require rackunit))
 (require "chapter-01.rkt"
          "chapter-04.rkt")
+(provide 1st-sub-exp 2nd-sub-exp operator)
 
 
 ;; numbered? :: AritmeticExpression -> Bool
