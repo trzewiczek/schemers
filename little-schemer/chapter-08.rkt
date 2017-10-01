@@ -6,17 +6,6 @@
 
 
 ;; rember-f :: (a -> b -> Bool) -> a -> List a -> List a
-(define rember-f
-  (λ (test?)
-     (λ (a l)
-        (cond
-          ((null? l) '())
-          ((test? a (car l))
-           ((rember-f test?) a (cdr l)))
-          (else
-            (cons (car l)
-                  ((rember-f test?) a (cdr l))))))))
-
 (module+ test
   (check-equal?
     ((rember-f =) 5 '(6 2 5 3))
@@ -35,20 +24,19 @@
     '(lemonade and (cake))
     "(pop corn) removed from the tasty menu position"))
 
+(define rember-f
+  (λ (test?)
+     (λ (a l)
+        (cond
+          ((null? l) '())
+          ((test? a (car l))
+           ((rember-f test?) a (cdr l)))
+          (else
+            (cons (car l)
+                  ((rember-f test?) a (cdr l))))))))
 
 
 ;; insertL-f :: (a -> a -> Bool) -> a -> a -> List a -> List a
-(define insertL-f
-  (λ (test?)
-     (λ (new old l)
-        (cond
-          ((null? l) '())
-          ((test? old (car l))
-           (cons new (cons old (cdr l))))
-          (else (cons (car l)
-                      ((insertL-f test?)
-                       new old (cdr l))))))))
-
 (module+ test
   (check-equal?
     ((insertL-f =) 1 5 '(6 2 5 3))
@@ -68,20 +56,19 @@
     '(lemonade with (pop corn) and (cake))
     "(pop corn) preserved with 'with'"))
 
-
-
-;; insertR-f :: (a -> a -> Bool) -> a -> a -> List a -> List a
-(define insertR-f
+(define insertL-f
   (λ (test?)
      (λ (new old l)
         (cond
           ((null? l) '())
           ((test? old (car l))
-           (cons old (cons new (cdr l))))
+           (cons new (cons old (cdr l))))
           (else (cons (car l)
-                      ((insertR-f test?)
+                      ((insertL-f test?)
                        new old (cdr l))))))))
 
+
+;; insertR-f :: (a -> a -> Bool) -> a -> a -> List a -> List a
 (module+ test
   (check-equal?
     ((insertR-f =) 1 5 '(6 2 5 3))
@@ -101,46 +88,43 @@
     '(lemonade (pop corn) pie and (cake))
     "pie put on the list"))
 
+(define insertR-f
+  (λ (test?)
+     (λ (new old l)
+        (cond
+          ((null? l) '())
+          ((test? old (car l))
+           (cons old (cons new (cdr l))))
+          (else (cons (car l)
+                      ((insertR-f test?)
+                       new old (cdr l))))))))
 
 
 ;; seqL :: a -> a -> List a -> List a
-(define seqL
-  (λ (new old l)
-     (cons new (cons old l))))
-
 (module+ test
   (check-equal?
     (seqL 'a 'b '(c d e))
     '(a b c d e)
     "a put before b and consed on c d e"))
 
+(define seqL
+  (λ (new old l)
+     (cons new (cons old l))))
 
 
 ;; seqR :: a -> a -> List a -> List a
-(define seqR
-  (λ (new old l)
-     (cons old (cons new l))))
-
 (module+ test
   (check-equal?
     (seqR 'b 'a '(c d e))
     '(a b c d e)
     "b put after a and consed on c d e"))
 
+(define seqR
+  (λ (new old l)
+     (cons old (cons new l))))
 
 
 ;; insert-g :: (a -> a -> List a) -> a -> a -> List a
-(define insert-g
-  (λ (seq)
-     (λ (new old l)
-        (cond
-          ((null? l) '())
-          ((equal? old (car l))
-           (seq new old (cdr l)))
-          (else
-            (cons (car l)
-                  ((insert-g seq) new old (cdr l))))))))
-
 (module+ test
   (check-equal?
     ((insert-g seqR) 'extra 'jelly '(jelly beans are good))
@@ -152,41 +136,42 @@
     '(extra jelly beans are good)
     "Jelly becomes extra with seqL"))
 
+(define insert-g
+  (λ (seq)
+     (λ (new old l)
+        (cond
+          ((null? l) '())
+          ((equal? old (car l))
+           (seq new old (cdr l)))
+          (else
+            (cons (car l)
+                  ((insert-g seq) new old (cdr l))))))))
 
 
 ;; seqS :: a -> a -> List a -> List a
-(define seqS
-  (λ (new old l)
-     (cons new l)))
-
 (module+ test
   (check-equal?
     (seqS 'a 'x '(b c d))
     '(a b c d)
     "a consed on b c d"))
 
+(define seqS
+  (λ (new old l)
+     (cons new l)))
 
 
 ;; subst :: a -> a -> List a -> List a
-(define subst
-  (insert-g seqS))
-
 (module+ test
   (check-equal?
     (subst 'extra 'jelly '(jelly beans are good))
     '(extra beans are good)
     "Extrra takes place of jelly"))
 
+(define subst
+  (insert-g seqS))
 
 
 ;; atom-to-function :: Atom -> (Number -> Number -> Number)
-(define atom-to-function
-  (λ (a)
-     (cond
-       ((eq? a '+) o+)
-       ((eq? a '*) o*)
-       (else o^))))
-
 (module+ test
   (check-equal?
     (atom-to-function '+) o+
@@ -200,18 +185,15 @@
     (atom-to-function '^) o^
     "^ resolves to power function"))
 
+(define atom-to-function
+  (λ (a)
+     (cond
+       ((eq? a '+) o+)
+       ((eq? a '*) o*)
+       (else o^))))
 
 
 ;; value :: N-Exp -> Number
-(define value
-  (λ (nexp)
-     (cond
-       ((atom? nexp) nexp)
-       (else
-         ((atom-to-function (operator nexp))
-          (value (1st-sub-exp nexp))
-          (value (2nd-sub-exp nexp)))))))
-
 (module+ test
   (check-equal?
     (value '(+ 5 3)) 8
@@ -225,9 +207,24 @@
     (value '(+ 5 (* 3 (^ 2 2)))) 17
     "5 + (3 * (2 ^ 2)) -> 17"))
 
+(define value
+  (λ (nexp)
+     (cond
+       ((atom? nexp) nexp)
+       (else
+         ((atom-to-function (operator nexp))
+          (value (1st-sub-exp nexp))
+          (value (2nd-sub-exp nexp)))))))
 
 
 ;; multirember-f :: (a -> a -> Bool) -> a -> List a -> List a
+(module+ test
+  (check-equal?
+    ((multirember-f eq?) 'tuna
+                         '(shrimp salad tuna salad and tuna))
+    '(shrimp salad salad and)
+    "All tuna removed from the dinner"))
+
 (define multirember-f
   (λ (test?)
      (λ (a l)
@@ -239,28 +236,27 @@
             (cons (car l)
                   ((multirember-f test?) a (cdr l))))))))
 
-(module+ test
-  (check-equal?
-    ((multirember-f eq?) 'tuna
-                         '(shrimp salad tuna salad and tuna))
-    '(shrimp salad salad and)
-    "All tuna removed from the dinner"))
-
-
 
 ;; last-friend :: List a -> List a -> Number
-(define last-friend
-  (λ (l1 l2)
-     (length l1)))
-
 (module+ test
   (check-equal?
     (last-friend '(strawberries and swordfish) '(tuna)) 3
     "Three words in this dish"))
 
+(define last-friend
+  (λ (l1 l2)
+     (length l1)))
 
 
 ;; multirember&co :: a -> List a -> (List a -> List a -> b) -> b
+(module+ test
+  (check-equal?
+    (multirember&co 'tuna
+                    '(strawberries tuna and swordfish)
+                    last-friend)
+    3
+    "Three words that are not tuna"))
+
 (define multirember&co
   (λ (a lat col)
      (cond
@@ -276,17 +272,15 @@
                             (col (cons (car lat) newlat)
                                  seen)))))))
 
-(module+ test
-  (check-equal?
-    (multirember&co 'tuna
-                    '(strawberries tuna and swordfish)
-                    last-friend)
-    3
-    "Three words that are not tuna"))
-
-
 
 ;; multiinertLR :: a -> a -> a -> List a -> List a
+(module+ test
+  (check-equal?
+    (multiinertLR 'jelly 'tuna 'and
+                    '(strawberries tuna and swordfish))
+    '(strawberries jelly tuna and jelly swordfish)
+    "Jelly here, jelly there..."))
+
 (define multiinertLR
   (λ (new oldL oldR lat)
      (cond
@@ -304,16 +298,31 @@
          (cons (car lat)
                (multiinertLR new oldL oldR (cdr lat)))))))
 
-(module+ test
-  (check-equal?
-    (multiinertLR 'jelly 'tuna 'and
-                    '(strawberries tuna and swordfish))
-    '(strawberries jelly tuna and jelly swordfish)
-    "Jelly here, jelly there..."))
-
-
 
 ;; multiinertLR&co :: a -> a -> a -> List a -> (List a -> Number -> Number -> b) -> b
+(module+ test
+  (check-equal?
+    (multiinertLR&co 'salty 'fish 'chips
+                     '(chips and fish or fish and chips)
+                     (λ (newlat L R) newlat))
+    '(chips salty and salty fish or
+      salty fish and chips salty)
+    "Collector return a multiinserted list")
+
+  (check-equal?
+    (multiinertLR&co 'salty 'fish 'chips
+                     '(chips and fish or fish and chips)
+                     (λ (newlat L R) L))
+    2
+    "Two inserts on the left")
+
+  (check-equal?
+    (multiinertLR&co 'salty 'fish 'chips
+                     '(chips and fish or fish and chips)
+                     (λ (newlat L R) R))
+    2
+    "Two inserts on the right"))
+
 (define multiinertLR&co
   (λ (new oldL oldR lat col)
      (cond
@@ -337,25 +346,79 @@
                                   L
                                   R)))))))
 
+
+;; even? :: Number -> Bool
+(module+ test
+  (check-true
+    (even? 2)
+    "Two is even enough")
+
+  (check-false
+    (even? 3)
+    "Three is too less of an even"))
+
+(define even
+  (λ (n)
+    (= (* (/ n 2) 2) n)))
+
+
+
+;; evens-only* :: List -> List
 (module+ test
   (check-equal?
-    (multiinertLR&co 'salty 'fish 'chips
-                     '(chips and fish or fish and chips)
-                     (λ (newlat L R) newlat))
-    '(chips salty and salty fish or
-      salty fish and chips salty)
-    "Collector return a multiinserted list")
+    (evens-only* '((9 1 2 8) 3 10 ((9 9) 7 6) 2))
+    '((2 8) 10 (() 6) 2)
+    "Some places let so empty without these odd ones"))
 
-  (check-equal?
-    (multiinertLR&co 'salty 'fish 'chips
-                     '(chips and fish or fish and chips)
-                     (λ (newlat L R) L))
-    2
-    "Two inserts on the left")
+(define evens-only*
+  (λ (l)
+     (cond
+       ((null? l) '())
+       ((atom? (car l))
+        (cond
+          ((even? (car l)) (cons (car l)
+                                 (evens-only* (cdr l))))
+          (else
+            (evens-only* (cdr l)))))
+       (else
+         (cons (evens-only* (car l))
+               (evens-only* (cdr l)))))))
 
+
+
+;; evens-only*&co :: List -> (List -> Number -> Number -> a) -> a
+(module+ test
   (check-equal?
-    (multiinertLR&co 'salty 'fish 'chips
-                     '(chips and fish or fish and chips)
-                     (λ (newlat L R) R))
-    2
-    "Two inserts on the right"))
+    (evens-only*&co
+      '((9 1 2 8) 3 10 ((9 9) 7 6) 2)
+      (λ (newl S M) (cons S (cons M newl))))
+    '(38 1920 (2 8) 10 (() 6) 2)
+    "Collector did its job!"))
+
+(define evens-only*&co
+  (λ (l col)
+     (cond
+       ((null? l) (col '() 0 1))
+       ((atom? (car l))
+        (cond
+          ((even? (car l))
+           (evens-only*&co (cdr l)
+                           (λ (newl S M)
+                              (col (cons (car l) newl)
+                                   S
+                                   (* (car l) M)))))
+          (else
+            (evens-only*&co (cdr l)
+                            (λ (newl S M)
+                               (col newl
+                                    (+ (car l) S)
+                                    M))))))
+       (else
+         (evens-only*&co (car l)
+           (λ (h-newl h-S h-M)
+              (evens-only*&co (cdr l)
+                (λ (r-newl r-S r-M)
+                   (col (cons h-newl r-newl)
+                        (+ h-S r-S)
+                        (* h-M r-M))))))))))
+

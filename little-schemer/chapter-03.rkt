@@ -5,13 +5,6 @@
 
 
 ;; rember :: Atom -> List Atom -> List Atom
-(define rember
-  (λ (a lat)
-    (cond
-      ((null? lat) '())
-      ((eq? a (car lat)) (cdr lat))
-      (else (cons (car lat) (rember a (cdr lat)))))))
-
 (module+ test
   (check-equal?
     (rember 'mint '(lamb chops and mint jelly))
@@ -33,16 +26,16 @@
     '(coffee tea cup and hick cup)
     "Only first found element removed from list"))
 
+(define rember
+  (λ (a lat)
+    (cond
+      ((null? lat) '())
+      ((eq? a (car lat)) (cdr lat))
+      (else (cons (car lat) (rember a (cdr lat)))))))
+
 
 
 ;; firsts :: List -> List
-(define firsts
-  (λ (l)
-    (cond
-      ((null? l) '())
-      ((atom? (car l)) (cons (car l) (firsts (cdr l))))
-      (else (cons (car (car l)) (firsts (cdr l)))))))
-
 (module+ test
   (check-equal?
    (firsts '((apple peach pumpkin)
@@ -70,16 +63,16 @@
    '((five plums) eleven (no))
    "Collect first elements from a list of lists"))
 
+(define firsts
+  (λ (l)
+    (cond
+      ((null? l) '())
+      ((atom? (car l)) (cons (car l) (firsts (cdr l))))
+      (else (cons (car (car l)) (firsts (cdr l)))))))
+
 
 
 ;; insertR :: Atom -> Atom -> List Atom -> List Atom
-(define insertR
-  (λ (new old lat)
-    (cond
-      ((null? lat) '())
-      ((eq? old (car lat)) (cons (car lat) (cons new (cdr lat))))
-      (else (cons (car lat) (insertR new old (cdr lat)))))))
-
 (module+ test
   (check-equal?
    (insertR 'topping 'fudge
@@ -103,15 +96,15 @@
     '(a b c)
     "Return the list untouched when old element not present"))
 
-
-;; insertL :: Atom -> Atom -> List Atom -> List Atom
-(define insertL
+(define insertR
   (λ (new old lat)
     (cond
       ((null? lat) '())
-      ((eq? old (car lat)) (cons new (cons (car lat) (cdr lat))))
-      (else (cons (car lat) (insertL new old (cdr lat)))))))
+      ((eq? old (car lat)) (cons (car lat) (cons new (cdr lat))))
+      (else (cons (car lat) (insertR new old (cdr lat)))))))
 
+
+;; insertL :: Atom -> Atom -> List Atom -> List Atom
 (module+ test
   (check-equal?
    (insertL 'topping 'for
@@ -136,15 +129,15 @@
    '(a b c)
    "Return the list untouched when old element not present"))
 
-
-;; subst :: Atom -> Atom -> List Atom -> List Atom
-(define subst
+(define insertL
   (λ (new old lat)
     (cond
       ((null? lat) '())
-      ((eq? old (car lat)) (cons new (cdr lat)))
-      (else (cons (car lat) (subst new old (cdr lat)))))))
+      ((eq? old (car lat)) (cons new (cons (car lat) (cdr lat))))
+      (else (cons (car lat) (insertL new old (cdr lat)))))))
 
+
+;; subst :: Atom -> Atom -> List Atom -> List Atom
 (module+ test
   (check-equal?
    (subst 'topping 'fudge
@@ -158,17 +151,16 @@
    '(ice cream with fudge for dessert)
    "Return the list untouched when old element not present"))
 
+(define subst
+  (λ (new old lat)
+    (cond
+      ((null? lat) '())
+      ((eq? old (car lat)) (cons new (cdr lat)))
+      (else (cons (car lat) (subst new old (cdr lat)))))))
+
 
 
 ;; subst2 :: Atom -> Atom -> Atom -> List Atom -> List Atom
-(define subst2
-  (λ (new o1 o2 lat)
-    (cond
-      ((null? lat) '())
-      ((or (eq? (car lat) o1)
-           (eq? (car lat) o2)) (cons new (cdr lat)))
-      (else (cons (car lat) (subst2 new o1 o2 (cdr lat)))))))
-
 (module+ test
   (check-equal?
     (subst2 'vanilla
@@ -184,9 +176,23 @@
     '(lemon ice cream with vanilla topping)
     "Should replace one of the old elements even if the other is not present"))
 
+(define subst2
+  (λ (new o1 o2 lat)
+    (cond
+      ((null? lat) '())
+      ((or (eq? (car lat) o1)
+           (eq? (car lat) o2)) (cons new (cdr lat)))
+      (else (cons (car lat) (subst2 new o1 o2 (cdr lat)))))))
+
 
 
 ;; multirember :: Atom -> List Atom -> List Atom
+(module+ test
+  (check-equal?
+    (multirember 'cup '(coffee cup tea cup and hick cup))
+    '(coffee tea and hick)
+    "Should remove all occurences of an atom from the list of atoms"))
+
 (define multirember
   (λ (a lat)
     (cond
@@ -194,15 +200,16 @@
       ((eq? a (car lat)) (multirember a (cdr lat)))
       (else (cons (car lat) (multirember a (cdr lat)))))))
 
-(module+ test
-  (check-equal?
-    (multirember 'cup '(coffee cup tea cup and hick cup))
-    '(coffee tea and hick)
-    "Should remove all occurences of an atom from the list of atoms"))
-
 
 
 ;; multiinsertR :: Atom -> Atom -> List Atom -> List Atom
+(module+ test
+  (check-equal?
+   (multiinsertR 'lemon 'ice
+                 '(ice cream with ice for dessert))
+   '(ice lemon cream with ice lemon for dessert)
+   "Insert an element to the right of already present elements"))
+
 (define multiinsertR
   (λ (new old lat)
     (cond
@@ -213,16 +220,16 @@
       (else
         (cons (car lat) (multiinsertR new old (cdr lat)))))))
 
-(module+ test
-  (check-equal?
-   (multiinsertR 'lemon 'ice
-                 '(ice cream with ice for dessert))
-   '(ice lemon cream with ice lemon for dessert)
-   "Insert an element to the right of already present elements"))
-
 
 
 ;; multiinsertL :: Atom -> Atom -> List Atom -> List Atom
+(module+ test
+  (check-equal?
+   (multiinsertL 'lemon 'ice
+                 '(ice cream with ice for dessert))
+   '(lemon ice cream with lemon ice for dessert)
+   "Insert an element to the right of already present elements"))
+
 (define multiinsertL
   (λ (new old lat)
     (cond
@@ -233,16 +240,16 @@
       (else
         (cons (car lat) (multiinsertL new old (cdr lat)))))))
 
-(module+ test
-  (check-equal?
-   (multiinsertL 'lemon 'ice
-                 '(ice cream with ice for dessert))
-   '(lemon ice cream with lemon ice for dessert)
-   "Insert an element to the right of already present elements"))
-
 
 
 ;; multisubst :: Atom -> Atom -> List Atom -> List Atom
+(module+ test
+  (check-equal?
+   (multisubst 'lemon 'ice
+               '(ice cream with ice for dessert))
+   '(lemon cream with lemon for dessert)
+   "Insert an element to the right of already present elements"))
+
 (define multisubst
   (λ (new old lat)
     (cond
@@ -252,10 +259,4 @@
       (else
         (cons (car lat) (multisubst new old (cdr lat)))))))
 
-(module+ test
-  (check-equal?
-   (multisubst 'lemon 'ice
-               '(ice cream with ice for dessert))
-   '(lemon cream with lemon for dessert)
-   "Insert an element to the right of already present elements"))
 

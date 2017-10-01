@@ -4,10 +4,6 @@
 
 
 ;; atom? :: _ -> Bool
-(define atom?
-  (λ (x)
-    (and (not (pair? x)) (not (null? x)))))
-
 (module+ test (require rackunit)
   (check-true
     (atom? 'atom)
@@ -37,3 +33,6 @@
     (atom? '(1 2 3))
     "Non-empty list is not an atom"))
 
+(define atom?
+  (λ (x)
+    (and (not (pair? x)) (not (null? x)))))

@@ -6,14 +6,6 @@
 
 
 ;; numbered? :: AritmeticExpression -> Bool
-(define numbered?
-  (λ (aexp)
-    (cond
-      ((atom? aexp) (number? aexp))
-      (else
-       (and (numbered? (car aexp))
-            (numbered? (car (cdr (cdr aexp)))))))))
-
 (module+ test
   (check-true
    (numbered? 1)
@@ -31,48 +23,69 @@
    (numbered? '(2 * sauasage))
    "3 * sausage is not an aritmetic expression"))
 
+(define numbered?
+  (λ (aexp)
+    (cond
+      ((atom? aexp) (number? aexp))
+      (else
+       (and (numbered? (car aexp))
+            (numbered? (car (cdr (cdr aexp)))))))))
+
 
 
 ;; 1st-sub-exp :: AritmeticExpression -> AritmeticExpression
-(define 1st-sub-exp
-  (λ (aexp)
-     (car (cdr aexp))))
-
 (module+ test
   (check-equal?
     (1st-sub-exp '(+ (* 2 5) (* 3 6)))
     '(* 2 5)
     "1st subexpression of + * 2 5 * 3 6 is * 2 5"))
 
+(define 1st-sub-exp
+  (λ (aexp)
+     (car (cdr aexp))))
+
 
 
 ;; 2nd-sub-exp :: AritmeticExpression -> AritmeticExpression
-(define 2nd-sub-exp
-  (λ (aexp)
-     (car (cdr (cdr aexp)))))
-
 (module+ test
   (check-equal?
     (2nd-sub-exp '(+ (* 2 5) (* 3 6)))
     '(* 3 6)
     "2nd subexpression of + * 2 5 * 3 6 is * 3 6"))
 
+(define 2nd-sub-exp
+  (λ (aexp)
+     (car (cdr (cdr aexp)))))
+
 
 
 ;; operator :: AritmeticExpression -> Atom
-(define operator
-  (λ (aexp)
-     (car aexp)))
-
 (module+ test
   (check-equal?
     (operator '(+ (* 2 5) (* 3 6)))
     '+
     "Operator of + * 2 5 * 3 6 is +"))
 
+(define operator
+  (λ (aexp)
+     (car aexp)))
+
 
 
 ;; value :: AritmeticExpression -> Number
+(module+ test
+  (check-equal?
+   (value 13) 13
+   "Value of a number is just this number")
+
+  (check-equal?
+   (value '(+ 1 3)) 4
+   "Value of 1 + 3 is 4")
+
+  (check-equal?
+   (value '(+ 1 (^ 3 4))) 82
+   "Value of 1 + (3 ^ 4) is 82"))
+
 (define value
   (λ (aexp)
     (cond
@@ -87,26 +100,9 @@
        (o^ (value (1st-sub-exp aexp))
            (value (2nd-sub-exp aexp)))))))
 
-(module+ test
-  (check-equal?
-   (value 13) 13
-   "Value of a number is just this number")
-
-  (check-equal?
-   (value '(+ 1 3)) 4
-   "Value of 1 + 3 is 4")
-
-  (check-equal?
-   (value '(+ 1 (^ 3 4))) 82
-   "Value of 1 + (3 ^ 4) is 82"))
-
 
 
 ;; sero? :: List -> Bool
-(define sero?
-  (λ (n)
-     (null? n)))
-
 (module+ test
   (check-true
     (sero? '())
@@ -116,13 +112,13 @@
     (sero? '(() ()))
     "(() ()) stands for two"))
 
+(define sero?
+  (λ (n)
+     (null? n)))
+
 
 
 ;; edd1 :: List -> List
-(define edd1
-  (λ (n)
-     (cons '() n)))
-
 (module+ test
   (check-equal?
     (edd1 '())
@@ -134,13 +130,13 @@
     '(() () ())
     "2 + 1 -> 3"))
 
+(define edd1
+  (λ (n)
+     (cons '() n)))
+
 
 
 ;; zub1 :: List -> List
-(define zub1
-  (λ (n)
-     (cdr n)))
-
 (module+ test
   (check-equal?
     (zub1 '(()))
@@ -152,16 +148,13 @@
     '(() ())
     "3 - 1 -> 2"))
 
+(define zub1
+  (λ (n)
+     (cdr n)))
+
 
 
 ;; oo+ :: List -> List
-(define oo+
-  (λ (n m)
-     (cond
-      ((sero? m) n)
-      (else
-        (edd1 (oo+ n (zub1 m)))))))
-
 (module+ test
   (check-equal?
     (oo+ '() '())
@@ -177,3 +170,11 @@
     (oo+ '(() () ()) '(() ()))
     '(() () () () ())
     "3 + 2 -> 5"))
+
+(define oo+
+  (λ (n m)
+     (cond
+      ((sero? m) n)
+      (else
+        (edd1 (oo+ n (zub1 m)))))))
+

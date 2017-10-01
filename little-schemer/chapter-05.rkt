@@ -5,6 +5,12 @@
 
 
 ;; rember* :: Atom -> List -> List
+(module+ test
+  (check-equal?
+    (rember* 'cup '((coffee) cup ((tea) cup) (and (hick)) cup))
+    '((coffee) ((tea)) (and (hick)))
+    "All found elements removed from list"))
+
 (define rember*
   (λ (a l)
      (cond
@@ -17,27 +23,8 @@
          (cons (rember* a (car l))
                (rember* a (cdr l)))))))
 
-(module+ test
-  (check-equal?
-    (rember* 'cup '((coffee) cup ((tea) cup) (and (hick)) cup))
-    '((coffee) ((tea)) (and (hick)))
-    "All found elements removed from list"))
-
 
 ;; insertR* :: Atom -> Atom -> List -> List
-(define insertR*
-  (λ (new old l)
-     (cond
-       ((null? l) '())
-       ((atom? (car l))
-        (cond
-          ((eq? old (car l)) (cons (car l)
-                                   (cons new (insertR* new old (cdr l)))))
-          (else (cons (car l) (insertR* new old (cdr l))))))
-       (else
-         (cons (insertR* new old (car l))
-               (insertR* new old (cdr l)))))))
-
 (module+ test
   (check-equal?
     (insertR* 'roast 'chuck
@@ -54,21 +41,22 @@
       (if (a) ((wood chuck roast)))
       could chuck roast wood)))
 
+(define insertR*
+  (λ (new old l)
+     (cond
+       ((null? l) '())
+       ((atom? (car l))
+        (cond
+          ((eq? old (car l)) (cons (car l)
+                                   (cons new (insertR* new old (cdr l)))))
+          (else (cons (car l) (insertR* new old (cdr l))))))
+       (else
+         (cons (insertR* new old (car l))
+               (insertR* new old (cdr l)))))))
+
 
 
 ;; occur* :: Atom -> List -> List
-(define occur*
-  (λ (a l)
-    (cond
-      ((null? l) 0)
-      ((atom? (car l))
-       (cond
-         ((eq? a (car l)) (add1 (occur* a (cdr l))))
-         (else (occur* a (cdr l)))))
-      (else
-        (+ (occur* a (car l))
-           (occur* a (cdr l)))))))
-
 (module+ test
   (check-equal?
     (occur* 'banana
@@ -81,21 +69,21 @@
               (banana brandy)))
     5))
 
+(define occur*
+  (λ (a l)
+    (cond
+      ((null? l) 0)
+      ((atom? (car l))
+       (cond
+         ((eq? a (car l)) (add1 (occur* a (cdr l))))
+         (else (occur* a (cdr l)))))
+      (else
+        (+ (occur* a (car l))
+           (occur* a (cdr l)))))))
+
 
 
 ;; subst* :: Atom -> Atom -> List -> List
-(define subst*
-  (λ (new old l)
-     (cond
-       ((null? l) '())
-       ((atom? (car l))
-        (cond
-          ((eq? old (car l)) (cons new (subst* new old (cdr l))))
-          (else (cons (car l) (subst* new old (cdr l))))))
-       (else
-         (cons (subst* new old (car l))
-               (subst* new old (cdr l)))))))
-
 (module+ test
   (check-equal?
     (subst* 'orange 'banana
@@ -114,22 +102,21 @@
       (bread)
       (orange brandy))))
 
-
-
-;; insertL* :: Atom -> Atom -> List -> List
-(define insertL*
+(define subst*
   (λ (new old l)
      (cond
        ((null? l) '())
        ((atom? (car l))
         (cond
-          ((eq? old (car l)) (cons new
-                                   (cons (car l) (insertL* new old (cdr l)))))
-          (else (cons (car l) (insertL* new old (cdr l))))))
+          ((eq? old (car l)) (cons new (subst* new old (cdr l))))
+          (else (cons (car l) (subst* new old (cdr l))))))
        (else
-         (cons (insertL* new old (car l))
-               (insertL* new old (cdr l)))))))
+         (cons (subst* new old (car l))
+               (subst* new old (cdr l)))))))
 
+
+
+;; insertL* :: Atom -> Atom -> List -> List
 (module+ test
   (check-equal?
     (insertL* 'pecker 'chuck
@@ -146,9 +133,27 @@
       (if (a) ((wood pecker chuck)))
       could pecker chuck wood)))
 
+(define insertL*
+  (λ (new old l)
+     (cond
+       ((null? l) '())
+       ((atom? (car l))
+        (cond
+          ((eq? old (car l)) (cons new
+                                   (cons (car l) (insertL* new old (cdr l)))))
+          (else (cons (car l) (insertL* new old (cdr l))))))
+       (else
+         (cons (insertL* new old (car l))
+               (insertL* new old (cdr l)))))))
+
 
 
 ;; member* :: Atom -> List -> Bool
+(module+ test
+  (check-true
+    (member* 'chips
+             '((potato) (chips ((with) fish) (chips))))))
+
 (define member*
   (λ (a l)
      (cond
@@ -161,20 +166,9 @@
          (or (member* a (car l))
              (member* a (cdr l)))))))
 
-(module+ test
-  (check-true
-    (member* 'chips
-             '((potato) (chips ((with) fish) (chips))))))
-
 
 
 ;; leftmost :: List -> Atom
-(define leftmost
-  (λ (l)
-     (cond
-       ((atom? (car l)) (car l))
-       (else (leftmost (car l))))))
-
 (module+ test
   (check-equal?
     (leftmost '((potato) (chips ((with) fish) (chips))))
@@ -184,17 +178,15 @@
     (leftmost '(((hot) (tuna (and))) cheese))
     'hot))
 
+(define leftmost
+  (λ (l)
+     (cond
+       ((atom? (car l)) (car l))
+       (else (leftmost (car l))))))
+
 
 
 ;; eqlist :: List -> List -> Bool
-(define eqlist?
-  (λ (l1 l2)
-     (cond
-       ((and (null? l1) (null? l2)) #t)
-       ((or (null? l1) (null? l2)) #f)
-       (else (and (equal? (car l1) (car l2))
-                  (equal? (cdr l1) (cdr l2)))))))
-
 (module+ test
   (check-true
     (eqlist? '(strawberry ice cream)
@@ -219,19 +211,17 @@
   (check-true
     (eqlist? '() '())))
 
+(define eqlist?
+  (λ (l1 l2)
+     (cond
+       ((and (null? l1) (null? l2)) #t)
+       ((or (null? l1) (null? l2)) #f)
+       (else (and (equal? (car l1) (car l2))
+                  (equal? (cdr l1) (cdr l2)))))))
+
 
 
 ;; equal? :: Any -> Any -> Bool
-(define equal?
-  (λ (s1 s2)
-    (cond
-      ((and (atom? s1) (atom? s2))
-       (eqan? s1 s2))
-      ((or (atom? s1) (atom? s2))
-       #f)
-      (else
-        (eqlist? s1 s2)))))
-
 (module+ test
   (check-true
     (equal? 0 0))
@@ -251,17 +241,19 @@
   (check-false
     (equal? '(potato (soup)) '(tomato (soup)))))
 
+(define equal?
+  (λ (s1 s2)
+    (cond
+      ((and (atom? s1) (atom? s2))
+       (eqan? s1 s2))
+      ((or (atom? s1) (atom? s2))
+       #f)
+      (else
+        (eqlist? s1 s2)))))
+
 
 
 ;; rember :: Atom -> List -> List
-(define rember
-  (λ (s l)
-     (cond
-       ((null? l) '())
-       ((equal? s (car l)) (cdr l))
-       (else (cons (car l)
-                   (rember s (cdr l)))))))
-
 (module+ test
   (check-equal?
     (rember 2 '(1 2 3))
@@ -278,3 +270,12 @@
   (check-equal?
     (rember '() '(a () soup))
     '(a soup)))
+
+(define rember
+  (λ (s l)
+     (cond
+       ((null? l) '())
+       ((equal? s (car l)) (cdr l))
+       (else (cons (car l)
+                   (rember s (cdr l)))))))
+

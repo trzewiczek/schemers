@@ -5,13 +5,6 @@
 
 
 ;; lat? :: List -> Bool
-(define lat?
-  (λ (l)
-    (cond
-      ((null? l) #t)
-      ((atom? (car l)) (lat? (cdr l)))
-      (else #f))))
-
 (module+ test
   (check-true
     (lat? '(Jack Sprat could eat no chicken fat))
@@ -29,16 +22,16 @@
     (lat? '())
     "Empty list is a list of atoms"))
 
+(define lat?
+  (λ (l)
+    (cond
+      ((null? l) #t)
+      ((atom? (car l)) (lat? (cdr l)))
+      (else #f))))
+
 
 
 ;; member? :: Atom -> List Atom -> List Atom
-(define member?
-  (λ (a lat)
-    (cond
-      ((null? lat) #f)
-      (else (or (eq? a (car lat))
-                (member? a (cdr lat)))))))
-
 (module+ test
   (check-true
     (member? 'tea '(coffee tea or milk))
@@ -47,5 +40,12 @@
   (check-false
     (member? 'poached '(fried eggs and scrambledd eggs))
     "poached is not present in the list"))
+
+(define member?
+  (λ (a lat)
+    (cond
+      ((null? lat) #f)
+      (else (or (eq? a (car lat))
+                (member? a (cdr lat)))))))
 
 
