@@ -3,6 +3,7 @@
 (require "chapter-01.rkt"
          "chapter-02.rkt"
          "chapter-03.rkt")
+(provide build first second)
 
 
 ;; set? :: List -> Bool
