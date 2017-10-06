@@ -45,6 +45,37 @@
 
 
 
+;; align :: Pair -> Pair
+(module+ test
+  (check-equal?
+    (shift '((a b) c)) '(a (b c))
+    "Pair and lonely -> Lonely and a pair"))
+
+(define align
+  (λ (pora)
+     (cond
+       ((atom? pora) pora)
+       ((pair? (first pora))
+        (align (shift pora)))
+       (else
+         (build (first pora)
+                (align (second pora)))))))
+
+
+;; length* :: Pair -> Number
+(module+ test
+  (check-equal?
+    (length* '(((a b) (c (d e))) (f (g h)))) 8
+    "It's 8 atoms in these pars of pairs of pairs..."))
+
+(define length*
+  (λ (pora)
+     (cond
+       ((atom? pora) 1)
+       (else
+         (+ (length* (first pora))
+            (length* (second pora)))))))
+
 ;; Y-Combinator :: Fun -> Fun
 (module+ test
   (check-equal?
