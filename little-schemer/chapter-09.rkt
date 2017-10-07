@@ -76,6 +76,27 @@
          (+ (length* (first pora))
             (length* (second pora)))))))
 
+
+;; weight* ;; Pair -> Number
+(module+ test
+  (check-equal?
+    (weight* '((a b) c)) 7
+    "The leftmost part weights a lot...")
+
+  (check-equal?
+    (weight* '(a (b c))) 5
+    "The leftmost part is light like a gain of sand."))
+
+(define weight*
+  (λ (pora)
+     (cond
+       ((atom? pora) 1)
+       (else
+         (+ (* (weight* (first pora)) 2)
+            (weight* (second pora)))))))
+
+
+
 ;; Y-Combinator :: Fun -> Fun
 (module+ test
   (check-equal?
