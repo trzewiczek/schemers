@@ -63,15 +63,12 @@
                                table-f)))))))
 
 
-
-;; expression-to-action
-(module+ test)
-
 (define expression-to-action
   (λ (e)
      (cond
-       ((atom? e) (atom-to-action))
-       (else (list-to-action)))))
+       ((atom? e) (atom-to-action e))
+       (else (list-to-action e)))))
+
 
 (define atom-to-action
   (λ (e)
@@ -126,11 +123,19 @@
 
 (define *identifier
   (λ (e table)
-     (lookup-in-table e initial-table)))
+     (lookup-in-table e table initial-table)))
 
 (define initial-table
   (λ (name)
      (car '())))
+
+;; *lambda
+(module+ test
+  (check-equal?
+    (meaning '(lambda (x) (cons x y))
+             '(((y z) ((8) 9))))
+    '(non-primitive
+       ((((y z) ((8) 9))) (x) (cons x y)))))
 
 (define *lambda
   (λ (e table)
@@ -162,6 +167,15 @@
 
 (define answer-of second)
 
+;; *cond
+(module+ test
+  (check-equal?
+    (*cond '(cond (coffee klatsch) (else part))
+           '(((coffee) (#t))
+             ((klatsch party) (5 (6)))))
+    5
+    "coffee -> klatsch -> 5"))
+
 (define *cond
   (λ (e table)
      (evcon (cond-lines-of e) table)))
@@ -173,5 +187,84 @@
     (cond
       ((null? args) '())
       (else
-        (cons (meaning (car args))
+        (cons (meaning (car args) table)
               (evlist (cdr args) table))))))
+
+(define *application
+  (λ (e table)
+     (apply
+       (meaning (function-of e) table)
+       (evlist (arguments-of e) table))))
+
+(define function-of car)
+
+(define arguments-of cdr)
+
+(define primitive?
+  (λ (l)
+     (eq? (first l) 'primitive)))
+
+(define non-primitive?
+  (λ (l)
+     (eq? (first l) 'non-primitive)))
+
+(define apply
+  (λ (fun vals)
+     (cond
+       ((primitive? fun)
+        (apply-primitive (second fun) vals))
+       ((non-primitive? fun)
+        (apply-closure (second fun) vals)))))
+
+(define apply-primitive
+  (λ (name vals)
+     (cond
+       ((eq? name 'cons)
+        (cons (first vals) (second vals)))
+       ((eq? name 'car)
+        (car (first vals)))
+       ((eq? name 'cdr)
+        (cdr (first vals)))
+       ((eq? name 'null?)
+        (null? (first vals)))
+       ((eq? name 'eq?)
+        (eq? (first vals)))
+       ((eq? name 'atom?)
+        (:atom? (first vals)))
+       ((eq? name 'zero?)
+        (zero? (first vals)))
+       ((eq? name 'add1)
+        (add1 (first vals)))
+       ((eq? name 'sub1)
+        (sub1 (first vals)))
+       ((eq? name 'number?)
+        (number? (first vals))))))
+
+(define :atom?
+  (λ (x)
+     (cond
+       ((atom? x) #t)
+       ((null? x) #f)
+       ((eq? (car x) 'primitive) #t)
+       ((eq? (car x) 'non-primitive) #t)
+       (else #f))))
+
+(define apply-closure
+  (λ (closure vals)
+    (meaning (body-of closure)
+             (extend-table
+               (new-entry (formals-of closure) vals)
+               (table-of closure)))))
+
+(module+ test
+  (check-equal?
+    (apply-closure '((((u v w)
+                       (1 2 3))
+                      ((x y z)
+                       (4 5 6)))
+                     (x y)
+                     (cons z x))
+                   '((a b c) (d e f)))
+    '(6 a b c)
+    "It goes all the parsing, application and finally..."))
+
