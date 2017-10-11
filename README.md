@@ -5,8 +5,11 @@ Code exercises from the *Little Schemer* series of books.
 
 ## Books series:
 
-▶ [Little Schemer](https://mitpress.mit.edu/books/little-schemer)
+✓ [Little Schemer](https://mitpress.mit.edu/books/little-schemer)
   by Daniel P. Friedmann and Matthias Felleisen
+  
+▶ [Structure and Interpretation of Computer Porgrams](https://mitpress.mit.edu/sicp/)
+  by Harold Abelson and Gerald Jay Sussman with Julie Sussman 
 
 ■ [Seasoned Schemer](https://mitpress.mit.edu/books/seasoned-schemer)
   by Daniel P. Friedman and Matthias Felleisen
