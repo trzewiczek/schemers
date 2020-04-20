@@ -8,10 +8,7 @@ Code exercises from the *Little Schemer* series of books.
 ✓ [Little Schemer](https://mitpress.mit.edu/books/little-schemer)
   by Daniel P. Friedmann and Matthias Felleisen
   
-■ [Beautiful Racket](https://beautifulracket.com/)
-  by Matthew Butterick
-
-■ [Seasoned Schemer](https://mitpress.mit.edu/books/seasoned-schemer)
+▶ [Seasoned Schemer](https://mitpress.mit.edu/books/seasoned-schemer)
   by Daniel P. Friedman and Matthias Felleisen
 
 ■ [Reasoned Schemer](https://mitpress.mit.edu/books/reasoned-schemer)
@@ -22,6 +19,9 @@ Code exercises from the *Little Schemer* series of books.
 
 ■ [Structure and Interpretation of Computer Porgrams](https://mitpress.mit.edu/sicp/)
   by Harold Abelson and Gerald Jay Sussman with Julie Sussman 
+
+■ [Beautiful Racket](https://beautifulracket.com/)
+  by Matthew Butterick
 
 
 ## Implementation
@@ -36,15 +36,7 @@ a collection of unit tests implemented as submodules in
 
 ```{bash}
 $ git clone https://github.com/trzewiczek/schemers.git
-$ yarn
-$ yarn test
-```
-
-There is a script for running tests in watch mode that reruns tests for
-every change in `**/*.rkt` files. 
-
-```{bash}
-$ yarn test:watch
+$ raco test <book-folder>/*rkt
 ```
 
 ## License
