@@ -121,3 +121,36 @@
        ((null? lat) #f)
        ((eq? n 1) (car lat))
        (else (pick (sub1 n) (cdr lat))))))
+
+;; scramble-b :: List<Atom> -> List<Atom> -> List<Atom>
+(module+ test
+   (check-equal?
+     (scramble-b '(1 2 3) '()) '(1 1 1)
+     "'(1 2 3) -> '() -> '(1 1 1)")
+
+   (check-equal?
+     (scramble-b '(1 3 2) '(1)) '(1 1 3)
+     "'(1 3 2) -> '(1) -> '(1 1 1 3)"))
+
+(define scramble-b
+  (λ (tup rev-pre)
+     (cond
+       ((null? tup) '())
+       (else (cons
+               (pick (car tup) (cons (car tup) rev-pre))
+               (scramble-b (cdr tup) (cons (car tup) rev-pre)))))))
+
+
+;; scramble :: List<Atom> -> List<Atom>
+(module+ test
+   (check-equal?
+     (scramble '(1 2 3)) '(1 1 1)
+     "'(1 2 3) -> '(1 1 1)")
+
+   (check-equal?
+     (scramble '(1 1 3 2)) '(1 1 1 3)
+     "'(1 1 3 2) -> '(1 1 1 3)"))
+
+(define scramble
+  (λ (tup)
+    (scramble-b tup '())))
